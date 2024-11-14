@@ -28,4 +28,30 @@ export class ConsumoAguaController {
         await this.consumoAguaService.deleteUser(name);
         return { message: 'Usuario deletado com sucesso!' };
     }
+
+    @Post('register')
+    async registerConsumption(
+        @Body('userId') userId: string,
+        @Body('name') name: string,
+        @Body('quantityConsumed') quantityConsumed: number,
+        @Body('date') date: Date
+    ) {
+        const response = await this.consumoAguaService.registerConsumption(userId, name, quantityConsumed, date);
+        return { id: response };
+    }
+
+    @Get('history')
+    async getConsumptionHistory(
+        @Body('userId') userId: string,
+        @Body('startDate') startDate: Date,
+        @Body('endDate') endDate: Date
+    ) {
+        return await this.consumoAguaService.getConsumptionHistory(userId, startDate, endDate);
+    }
+
+    @Get('alert/:userId')
+    async getHighConsumptionAlert(@Param('userId') userId: string) {
+        return await this.consumoAguaService.checkHighConsumptionAlert(userId);
+    }
+
 }

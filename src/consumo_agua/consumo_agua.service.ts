@@ -48,4 +48,38 @@ export class ConsumoAguaService {
         await updateUser.save();
         return updateUser;
     }
+
+    async registerConsumption(userId: string, name: string, quantityConsumed: number, date: Date) {
+        const user = new this.userModel({
+            userId,
+            name,
+            quantityConsumed,
+            date
+        });
+        const result = await user.save();
+        return result.id;
+    }
+
+    async getConsumptionHistory(userId: string, startDate: Date, endDate: Date) {
+        return await this.userModel.find({
+            userId,
+            date: { $gte: startDate, $lte: endDate }
+        }).exec();
+    }
+
+    async checkHighConsumptionAlert(userId: string): Promise<{ alert: boolean; message: string }> {
+        const lastTwoMonths = await this.userModel.find({ userId }).sort({ date: -1 }).limit(2).exec();
+    
+        if (lastTwoMonths.length < 2) {
+            return { alert: false, message: "Consumo insuficiente para gerar alertas." };
+        }
+    
+        const [latest, previous] = lastTwoMonths;
+    
+        if (latest.quantityConsumed > previous.quantityConsumed) {
+            return { alert: true, message: `Consumo elevado! O consumo de ${latest.quantityConsumed}m³ ultrapassou o do mês anterior de ${previous.quantityConsumed}m³.` };
+        }
+    
+        return { alert: false, message: "Consumo dentro dos limites." };
+    }
 }
