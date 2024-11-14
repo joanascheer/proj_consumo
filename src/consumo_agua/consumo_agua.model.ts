@@ -1,14 +1,16 @@
 import mongoose, * as Mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({
-    name: { type: String, required: true},
-    quantityConsumed: {type: String, required: true},
-    date: {type: String, required: true} 
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    quantityConsumed: { type: Number, required: true },
+    date: { type: Date, required: true }
 });
 
 export interface User extends mongoose.Document {
-    id: String,
-    name: String,
-    quantityConsumed: String,
-    date: String
+    id: string;
+    userId: string;
+    name: string;
+    quantityConsumed: number;
+    date: Date;
 }
